@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+  
+  </style>
+</head>
+<body>
+  
+  <label id="time"></label>
+  
+  <script type="text/javascript" charset="utf-8" defer>
+    
+    let label = document.getElementById("time");
+    
+    let { log } = console
+    
+    setInterval(() => {updateTime()}, 1000);
+    
+    
+    
+    function updateTime() {
+      
+      const date = new Date();
+      
+      let hrs = date.getHours();
+      let min = date.getMinutes();
+      let amOrPm = hrs > 12 ? "pm" : "am";
+      
+      hrs = (hrs % 12) || 12;
+      
+      hrs = formatZero(hrs);
+      min = formatZero(min);
+      
+      console.log(hrs.toString())
+      
+      console.log(`${hrs}:${min} ${amOrPm}`)
+      
+      function formatZero(time) {
+        time = time.toString();
+        return ( time.length < 2 ) ? "0" + time : time
+          
+      }
+      
+    }
+    
+  </script>
+  
+</body>
+</html>
