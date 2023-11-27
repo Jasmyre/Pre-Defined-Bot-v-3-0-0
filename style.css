@@ -1,6 +1,6 @@
 * {
   box-sizing: border-box;
-  font-family: ;
+  font-family: sans-serif, 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   scroll-behavior: smooth;
   
 }
@@ -23,11 +23,10 @@ body {
 
 header {
   background: #141414;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr 4fr;
-  grid-auto-rows: 1fr;
   color: whitesmoke;
+  display: flex;
+  gap: 1rem;
+  padding: 0 1rem 0 1rem;
   
 }
 
@@ -39,16 +38,11 @@ header .bot-pfp{
 }
 
 header span {
-  //background: cyan;
   display: flex;
   justify-content: center;
   align-items: center;
-  
-}
-
-header span i {
-  //background: red;
-  font-size: 2rem;
+  font-family: monospace;
+  font-weight: bold;
   
 }
 
@@ -74,7 +68,6 @@ header span i {
 }
 
 .bot-message-wrapper {
-  //background: cyan;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -105,7 +98,6 @@ header span i {
 
 
 .user-message-wrapper {
-  //background: cyan;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -127,7 +119,6 @@ header span i {
   background: #034078;
   padding: .75rem;
   max-width: 75%;
-  //width: fit-content;
   word-wrap: break-word;
   border-radius: .5rem .5rem .0rem .5rem;
   color: #f0f0f0;
@@ -164,8 +155,10 @@ footer .inputs-input:hover, inputs-input:active, inputs-input:focus {
 
 footer .inputs-send {
   border-radius: .5rem;
-  //background: #2e2e2e;
-  //border: none;
+  background: whitesmoke;
+  border: none;
+  color: black;
+  font-weight: bold;
   
 }
 
@@ -185,4 +178,21 @@ img {
   opacity: 1;
   transform: translateY(0);
   
+}
+
+@media (min-width: 768px) {
+  body {
+    background-color: #1c1c1c;
+
+  }
+
+  header, section, footer {
+    max-width: 50%;
+    place-self: center;
+    height: 100%;
+    width: 100%;
+    box-shadow: 0rem 0rem 2.5rem #0f0f0f;
+
+  }
+
 }

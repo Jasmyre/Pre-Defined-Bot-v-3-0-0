@@ -12,6 +12,8 @@ const observer = new IntersectionObserver((entries) => {
   
 });
 
+
+
 const botName = document.getElementById("bot-name");
 
 let botNames = [
@@ -53,7 +55,7 @@ let botNames = [
   "Wilma Fingerdoo",
   "Yuri Nator",
   "Hans Ohff",
-  "Watson Herbusch",
+  "Watson Herbush",
   "Weeney Stroker"
 ]
 
@@ -158,6 +160,14 @@ function addUserMessage(text) {
 const sendButton = document.getElementById("inputs-send");
 const userMessageInput = document.getElementById("inputs-input");
 
+document.onkeyup = (e) => {
+ if (e.code === "Tab") {
+  userMessageInput.click();
+
+ } 
+
+}
+
 let userMessage = "";
 
 sendButton.addEventListener("click", () => {
@@ -183,6 +193,28 @@ userMessageInput.addEventListener("input", () => {
   userMessage = userMessageInput.value;
   
 });
+
+document.onkeydown = (e) => {
+  console.log(e.code);
+  if (e.code === "Enter") {
+    if (userMessage == "") {
+      return;
+      
+    } else {
+      addUserMessage(userMessage);
+      
+      const mainSection = document.getElementById("main");
+      
+      setTimeout(function() {mainSection.lastChild.scrollIntoView()}, 250);
+      
+      setTimeout(() => botResponse(userMessage.toLowerCase()), 1250);
+      
+      userMessageInput.value = "";
+      
+    }
+
+  }
+}
 
 function botResponse(userMessage) {
   let response = "";
