@@ -1,4 +1,6 @@
 
+// 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
+
 const observer = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     
@@ -12,10 +14,77 @@ const observer = new IntersectionObserver((entries) => {
   
 });
 
+// Define a global memory array to store responses
+let memory = [
+  `your responses should be short and minimal and is straight forward to the point.`,
+  "hi, what's good?"
+];
 
+
+
+// Function to interact with the OpenAI API to generate a response based on input text
+async function generateResponse(inputText) {
+    // Define your OpenAI API key
+    const apiKey = 'API KEY';
+
+    // Define the OpenAI API endpoint
+    const apiUrl = 'https://api.openai.com/v1/completions';
+
+    try {
+        // Make a POST request to the OpenAI API
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: 'gpt-3.5-turbo-instruct', // Adjust the model as needed
+                prompt: inputText,
+                max_tokens: 2000 // Adjust the max_tokens parameter as needed
+            })
+        });
+
+        // Parse the response as JSON
+        const responseData = await response.json();
+
+        // Store the generated text in memory
+        memory.push(responseData.choices[0].text.trim());
+
+        // Check if the total length of all responses in memory exceeds 2048 tokens
+        let totalLength = memory.reduce((acc, curr) => acc + curr.length, 0);
+        while (totalLength > 2048) {
+            // Remove the second eldest memory
+            memory.shift();
+            totalLength = memory.reduce((acc, curr) => acc + curr.length, 0);
+        }
+
+        // Return the generated text from the API response
+        return responseData.choices[0].text.trim();
+    } catch (error) {
+        // Handle errors
+        console.error('Error:', error);
+        return null;
+    }
+}
+
+// Example usage of the function
+async function exampleUsage(text) {
+    memory.push(text + ".");
+    const inputText = memory[memory.length - 1];
+    console.log(memory[memory.length - 1]);
+    const response = await generateResponse(inputText);
+    console.log(response);
+    return response;
+}
+
+// Call the example usage function
+// exampleUsage();
+
+// =================================================================
 
 const botName = document.getElementById("bot-name");
-
+const defaultBotName = "Nick";
 let botNames = [
   "Mike Oxlong",
   "Finn Gurrer",
@@ -60,11 +129,42 @@ let botNames = [
 ]
 
 setTimeout(() => {
-  let botInnerName = document.createTextNode(botNames[Math.floor(Math.random() * botNames.length)]);
+  let botInnerName = defaultBotName;
   
-  botName.append(botInnerName);
+  botName.innerText = botInnerName;
   
 });
+
+let allowedRandomName = false;
+let allowedGPT = true;
+
+function toggleRandomName() {
+  allowedRandomName = !allowedRandomName;
+
+  if (allowedRandomName) {
+    setTimeout(() => {
+      let botInnerName = botNames[Math.floor(Math.random() * botNames.length)];
+      
+      botName.innerText = String (botInnerName);
+      
+    });
+  } else {
+    botName.innerText = defaultBotName;
+  }
+
+}
+
+
+function toggleGPT() {
+  allowedGPT = !allowedGPT;
+}
+
+toggleGPT();
+
+
+console.log(allowedRandomName);
+
+
 
 function firstBotMessage(text) {
   const mainSection = document.getElementById("main");
@@ -105,29 +205,57 @@ function addScrollAnimation() {
 
 addScrollAnimation();
 
-function addBotMessage(text) {
-  const mainSection = document.getElementById("main");
+function addBotMessage(text) {  
+
+  if (allowedGPT == false) {
+    const mainSection = document.getElementById("main");
   
-  let botMessageWrapper = document.createElement("div");
-  let botMessageTime = document.createElement("span");
-  let botMessage = document.createElement("div");
-  let botInnerMessage = document.createTextNode(text);
+    let botMessageWrapper = document.createElement("div");
+    let botMessageTime = document.createElement("span");
+    let botMessage = document.createElement("div");
+    let botInnerMessage = document.createTextNode(String(text));
+    
+    let botMessageTimeText = document.createTextNode(updateTime());
+    
+    botMessageWrapper.classList.add("bot-message-wrapper");
+    botMessageTime.classList.add("message-time");
+    botMessageTime.classList.add("hidden")
+    botMessage.classList.add("bot-message");
+    botMessage.classList.add("hidden");
+    
+    mainSection.append(botMessageWrapper);
+    botMessageWrapper.append(botMessageTime);
+    botMessageWrapper.append(botMessage);
+    botMessageTime.append(botMessageTimeText);
+    botMessage.append(botInnerMessage);
+    
+    addScrollAnimation();
+
+  } else {
+    const mainSection = document.getElementById("main");
   
-  let botMessageTimeText = document.createTextNode(updateTime());
-  
-  botMessageWrapper.classList.add("bot-message-wrapper");
-  botMessageTime.classList.add("message-time");
-  botMessageTime.classList.add("hidden")
-  botMessage.classList.add("bot-message");
-  botMessage.classList.add("hidden");
-  
-  mainSection.append(botMessageWrapper);
-  botMessageWrapper.append(botMessageTime);
-  botMessageWrapper.append(botMessage);
-  botMessageTime.append(botMessageTimeText);
-  botMessage.append(botInnerMessage);
-  
+    let botMessageWrapper = document.createElement("div");
+    let botMessageTime = document.createElement("span");
+    let botMessage = document.createElement("div");
+    let botInnerMessage = document.createTextNode(String(text));
+    console.log(text);
+    
+    let botMessageTimeText = document.createTextNode(updateTime());
+    
+    botMessageWrapper.classList.add("bot-message-wrapper");
+    botMessageTime.classList.add("message-time");
+    botMessageTime.classList.add("hidden")
+    botMessage.classList.add("bot-message");
+    botMessage.classList.add("hidden");
+    
+    mainSection.append(botMessageWrapper);
+    botMessageWrapper.append(botMessageTime);
+    botMessageWrapper.append(botMessage);
+    botMessageTime.append(botMessageTimeText);
+    botMessage.append(botInnerMessage);
+    
   addScrollAnimation();
+  }
   
 }
 
@@ -181,7 +309,11 @@ sendButton.addEventListener("click", () => {
     
     setTimeout(function() {mainSection.lastChild.scrollIntoView()}, 250);
     
-    setTimeout(() => botResponse(userMessage.toLowerCase()), 1250);
+    if (allowedGPT == false) {
+      setTimeout(() => botResponse(userMessage.toLowerCase()), 1250);
+    } else {
+      setTimeout(() => botResponse(userMessage), 1250);
+    }
     
     userMessageInput.value = "";
     
@@ -195,7 +327,7 @@ userMessageInput.addEventListener("input", () => {
 });
 
 document.onkeydown = (e) => {
-  console.log(e.code);
+  // console.log(e.code);
   if (e.code === "Enter") {
     if (userMessage == "") {
       return;
@@ -207,7 +339,11 @@ document.onkeydown = (e) => {
       
       setTimeout(function() {mainSection.lastChild.scrollIntoView()}, 250);
       
-      setTimeout(() => botResponse(userMessage.toLowerCase()), 1250);
+      if (allowedGPT == false) {
+        setTimeout(() => botResponse(userMessage.toLowerCase()), 1250);
+      } else {
+        setTimeout(() => botResponse(userMessage), 1250);
+      }
       
       userMessageInput.value = "";
       
@@ -217,19 +353,26 @@ document.onkeydown = (e) => {
 }
 
 function botResponse(userMessage) {
-  let response = "";
+
+  if (allowedGPT == false) {
+    let response = "";
   
-  const findResponse = data.find(response => response.inputs.includes(userMessage));
-  
-  if (findResponse) {
-    response = findResponse.outputs[Math.floor(Math.random() * findResponse.outputs.length)];
+    const findResponse = data.find(response => response.inputs.includes(userMessage));
     
+    if (findResponse) {
+      response = findResponse.outputs[Math.floor(Math.random() * findResponse.outputs.length)];
+      
+    } else {
+      response = unkownMessageResponse[Math.floor(Math.random() * unkownMessageResponse.length)];
+      
+    }
+    
+    addBotMessage(response);
   } else {
-    response = unkownMessageResponse[Math.floor(Math.random() * unkownMessageResponse.length)];
-    
+
+    let message = exampleUsage(userMessage);
+    addBotMessage(message);
   }
-  
-  addBotMessage(response);
   
   const mainSection = document.getElementById("main");
     
